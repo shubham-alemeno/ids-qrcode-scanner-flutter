@@ -1,15 +1,62 @@
 import 'package:flutter/material.dart';
+import 'package:ids_qrcode_scanner/features/qrscanner/widgets/camera_scanner.dart';
+import 'package:mobile_scanner/mobile_scanner.dart';
 
-class QRCodeScannerApp extends StatefulWidget {
-  const QRCodeScannerApp({super.key});
+
+class QRCodeScannerPage extends StatefulWidget {
+  const QRCodeScannerPage({super.key});
 
   @override
-  State<QRCodeScannerApp> createState() => _QRCodeScannerAppState();
+  State<QRCodeScannerPage> createState() => _QRCodeScannerPageState();
 }
 
-class _QRCodeScannerAppState extends State<QRCodeScannerApp> {
+class _QRCodeScannerPageState extends State<QRCodeScannerPage> {
+
+  MobileScannerController cameraController = MobileScannerController();
+
   @override
   Widget build(BuildContext context) {
-    return const Placeholder();
+    return Scaffold(
+        appBar: AppBar(
+          title: const Text('QR Code Scanner'),
+          actions: [
+            IconButton(
+              color: Colors.white,
+              icon: ValueListenableBuilder(
+                valueListenable: cameraController.torchState,
+                builder: (context, state, child) {
+                  switch (state as TorchState) {
+                    case TorchState.off:
+                      return const Icon(Icons.flash_off, color: Colors.grey);
+                    case TorchState.on:
+                      return const Icon(Icons.flash_on, color: Colors.yellow);
+                  }
+                },
+              ),
+              iconSize: 32.0,
+              onPressed: () => cameraController.toggleTorch(),
+            ),
+            IconButton(
+              color: Colors.black,
+              icon: ValueListenableBuilder(
+                valueListenable: cameraController.cameraFacingState,
+                builder: (context, state, child) {
+                  switch (state as CameraFacing) {
+                    case CameraFacing.front:
+                      return const Icon(Icons.camera_front);
+                    case CameraFacing.back:
+                      return const Icon(Icons.camera_rear);
+                  }
+                },
+              ),
+              iconSize: 32.0,
+              onPressed: () => cameraController.switchCamera(),
+            ),
+          ],
+        ),
+        body: Container(
+          child: CameraScanner(),
+        )
+      );
   }
 }
