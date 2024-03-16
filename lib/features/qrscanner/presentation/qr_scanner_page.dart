@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ids_qrcode_scanner/features/qrscanner/cubit/scannerdata_cubit.dart';
 import 'package:ids_qrcode_scanner/features/qrscanner/presentation/display_data_page.dart';
+import 'package:ids_qrcode_scanner/features/qrscanner/widgets/scanner_error_handler.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 
 class QRCodeScannerPage extends StatefulWidget {
@@ -20,11 +21,7 @@ class _QRCodeScannerPageState extends State<QRCodeScannerPage> {
   @override
   void initState() {
     super.initState();
-    cameraController = MobileScannerController(
-      detectionSpeed: DetectionSpeed.normal,
-      facing: CameraFacing.back,
-      torchEnabled: false,
-    );
+    initializeCameraController();
   }
 
   @override
@@ -82,29 +79,47 @@ class _QRCodeScannerPageState extends State<QRCodeScannerPage> {
         ),
         body: BlocListener<ScannerDataCubit, ScannerDataState>(
           listenWhen: (previous, current) => previous != current,
-          listener: (context, state) {
+          listener: (context, state) async {
             if (state is ScannerDataProcessed) {
               log("Push Called");
-              Navigator.of(context).push(MaterialPageRoute(
+              await cameraController.stop();
+              await Navigator.of(context).push(MaterialPageRoute(
                 builder: (context) => ScannerDataPage(barcodes: state.barcodes),
               ));
+              await cameraController.start();
+              // initializeCameraController();
             }
           },
-          child: Container(
-            child: MobileScanner(
-              controller: cameraController,
-              onDetect: (capture) {
-                if (context.read<ScannerDataCubit>().getScannedStatus() ==
-                    false) {
-                  final List<Barcode> barcodes = capture.barcodes;
-                  final Uint8List? image = capture.image;
-                  context.read<ScannerDataCubit>().processData(barcodes);
-                } else {
-                  log("Captured called");
-                }
-              },
-            ),
+          child: Stack(
+            children: <Widget>[
+                MobileScanner(
+                controller: cameraController,
+                errorBuilder: (BuildContext context, MobileScannerException error, Widget? child) {
+                  return ScannerErrorWidget(error: error);
+                },
+                fit: BoxFit.contain,
+                onDetect: (capture) {
+                  if (context.read<ScannerDataCubit>().getScannedStatus() ==
+                      false) {
+                    final List<Barcode> barcodes = capture.barcodes;
+                    // final Uint8List? image = capture.image;
+                    context.read<ScannerDataCubit>().processData(barcodes);
+                  } else {
+                    log("Captured called");
+                  }
+                },
+              ),
+            ]
           ),
         ));
+  }
+
+  // Initialize the camera controller
+  void initializeCameraController() {
+    cameraController = MobileScannerController(
+      detectionSpeed: DetectionSpeed.normal,
+      facing: CameraFacing.back,
+      torchEnabled: false,
+    );
   }
 }

@@ -1,6 +1,6 @@
 import 'package:bloc/bloc.dart';
 import 'package:flutter/foundation.dart';
-import 'package:ids_qrcode_scanner/features/qrscanner/data/models.dart';
+
 import 'package:meta/meta.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 
