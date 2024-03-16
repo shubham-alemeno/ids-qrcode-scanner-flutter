@@ -25,3 +25,7 @@
 //   "booking_id": "#IDS-00041"
 // }
 
+class BarCode{
+  final String rawValue;
+  BarCode({required this.rawValue});
+}
