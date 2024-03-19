@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:ids_qrcode_scanner/features/qrscanner/cubit/scannerdata_cubit.dart';
-import 'package:mobile_scanner/mobile_scanner.dart';
+import 'package:ids_qrcode_scanner/features/qrscanner/data/models.dart';
 
 class ScannerDataPage extends StatefulWidget {
   // const ScannerDataPage(this.notifyIsMountedFn, {super.key, required this.barcodes});
@@ -9,14 +7,13 @@ class ScannerDataPage extends StatefulWidget {
 
   // final Function() notifyIsMountedFn;
 
-  final List<Barcode> barcodes;
+  final List<Appointment> barcodes;
 
   @override
   State<ScannerDataPage> createState() => _ScannerDataPageState();
 }
 
 class _ScannerDataPageState extends State<ScannerDataPage> {
-
   @override
   void initState() {
     super.initState();
@@ -28,19 +25,19 @@ class _ScannerDataPageState extends State<ScannerDataPage> {
 
   @override
   Widget build(BuildContext context) {
-    return PopScope(
-      onPopInvoked: (didPop) {
-        if(didPop){
-          context.read<ScannerDataCubit>().resetData();
-        }
-      },
-      child: Scaffold(
-        appBar: AppBar(
-          title: const Text('Scanner Data'),
-        ),
-        body: Center(
-          child: Text(widget.barcodes.map((e) => e.rawValue).join('\n')),
-        ),
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Scanner Data'),
+      ),
+      body: Center(
+        child: ListView.builder(
+            itemBuilder: (BuildContext context, int index) {
+              return ListTile(
+                title: Text(widget.barcodes[index].customerEmail),
+                subtitle: Text(widget.barcodes[index].customerFirstName),
+              );
+            },
+            itemCount: widget.barcodes.length),
       ),
     );
   }
