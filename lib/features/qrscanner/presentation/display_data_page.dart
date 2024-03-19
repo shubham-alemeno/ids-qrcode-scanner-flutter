@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:ids_qrcode_scanner/features/qrscanner/data/models.dart';
+import 'package:ids_qrcode_scanner/features/qrscanner/widgets/data_display_widget.dart';
 
-class ScannerDataPage extends StatefulWidget {
+class ScannerDataPage extends StatelessWidget {
   // const ScannerDataPage(this.notifyIsMountedFn, {super.key, required this.barcodes});
   const ScannerDataPage({super.key, required this.barcodes});
 
@@ -10,34 +11,19 @@ class ScannerDataPage extends StatefulWidget {
   final List<Appointment> barcodes;
 
   @override
-  State<ScannerDataPage> createState() => _ScannerDataPageState();
-}
-
-class _ScannerDataPageState extends State<ScannerDataPage> {
-  @override
-  void initState() {
-    super.initState();
-    // Notify FirstRoute after paint
-    // WidgetsBinding.instance.addPostFrameCallback((_) {
-    //   widget.notifyIsMountedFn();
-    // });
-  }
-
-  @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Scanner Data'),
-      ),
-      body: Center(
-        child: ListView.builder(
-            itemBuilder: (BuildContext context, int index) {
-              return ListTile(
-                title: Text(widget.barcodes[index].customerEmail),
-                subtitle: Text(widget.barcodes[index].customerFirstName),
-              );
-            },
-            itemCount: widget.barcodes.length),
+    return SafeArea(
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text('Scanner Data'),
+        ),
+        body: Center(
+          child: ListView.builder(
+              itemBuilder: (BuildContext context, int index) {
+                return DataDisplayWidget(listItem: barcodes[index]);
+              },
+              itemCount: barcodes.length),
+        ),
       ),
     );
   }

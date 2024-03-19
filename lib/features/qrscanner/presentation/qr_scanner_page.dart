@@ -83,33 +83,36 @@ class _QRCodeScannerPageState extends State<QRCodeScannerPage> {
               log("Push Called");
               await cameraController.stop();
               await Navigator.of(context).push(MaterialPageRoute(
-                builder: (context) => ScannerDataPage(barcodes: state.barcodes),
+                builder: (context) {
+                  return ScannerDataPage(barcodes: state.barcodes);
+                },
               ));
+              context.read<ScannerDataCubit>().resetData();
               await cameraController.start();
               // initializeCameraController();
             }
           },
-          child: Stack(
-            children: <Widget>[
-                MobileScanner(
-                controller: cameraController,
-                errorBuilder: (BuildContext context, MobileScannerException error, Widget? child) {
-                  return ScannerErrorWidget(error: error);
-                },
-                fit: BoxFit.contain,
-                onDetect: (capture) {
-                  if (context.read<ScannerDataCubit>().getScannedStatus() ==
-                      false) {
-                    final List<Barcode> barcodes = capture.barcodes;
-                    // final Uint8List? image = capture.image;
-                    context.read<ScannerDataCubit>().processData(barcodes);
-                  } else {
-                    log("Captured called");
-                  }
-                },
-              ),
-            ]
-          ),
+          child: Stack(children: <Widget>[
+            MobileScanner(
+              controller: cameraController,
+              errorBuilder: (BuildContext context, MobileScannerException error,
+                  Widget? child) {
+                return ScannerErrorWidget(error: error);
+              },
+              fit: BoxFit.contain,
+              onDetect: (capture) {
+                log(context.read<ScannerDataCubit>().state.scanned.toString());
+                if (context.read<ScannerDataCubit>().state.scanned ==
+                    false) {
+                  final List<Barcode> barcodes = capture.barcodes;
+                  // final Uint8List? image = capture.image;
+                  context.read<ScannerDataCubit>().processData(barcodes);
+                } else {
+                  log("Captured called");
+                }
+              },
+            ),
+          ]),
         ));
   }
 

@@ -14,6 +14,7 @@ class ScannerDataCubit extends Cubit<ScannerDataState> {
   ScannerDataCubit() : super(ScannerDataInitial());
 
   void resetData() {
+    log("resetData called");
     emit(ScannerDataInitial());
   }
 
@@ -25,9 +26,6 @@ class ScannerDataCubit extends Cubit<ScannerDataState> {
     // for (final barcode in barcodes) {
     //   log('Barcode found! ${barcode.rawValue}');
     // }
-    print(json.decode(barcodes[0].rawValue!));
-    Appointment appointmentInstance =
-        Appointment.fromJson(json.decode(barcodes[0].rawValue!));
     List<Appointment> data = [
       ...barcodes.map((e) => Appointment.fromJson(json.decode(e.rawValue!)))
     ];

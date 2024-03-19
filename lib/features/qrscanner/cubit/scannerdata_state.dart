@@ -2,10 +2,10 @@ part of 'scannerdata_cubit.dart';
 
 @immutable
 sealed class ScannerDataState {
-  final bool scanned;
-  final List<Appointment> barcodes;
+  bool scanned;
+  List<Appointment> barcodes;
 
-  const ScannerDataState(this.barcodes, this.scanned);
+  ScannerDataState(this.barcodes, this.scanned);
 }
 
 final class ScannerDataInitial extends ScannerDataState {
