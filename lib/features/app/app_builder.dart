@@ -13,20 +13,11 @@ class AppBuilder extends StatelessWidget {
     return MaterialApp(
         home: MultiBlocProvider(
         providers: [
-          BlocProvider(create: (_) => SplashBloc()..add(SetSplash()), child: const SplashScreen()),
           BlocProvider(
             create: (context) => NetworkBloc()..add(NetworkObserve()),
           ),
         ],
-        child: BlocBuilder<SplashBloc, SplashState>(
-          builder: (context, state) {
-            if (state is SplashLoadedState) {
-              return const HomePage();
-            } else {
-              return const SplashScreen();
-            }
-          },
-        )
+        child: const HomePage(),
       )
     );
   }
